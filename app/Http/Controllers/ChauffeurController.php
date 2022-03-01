@@ -65,6 +65,34 @@ class ChauffeurController extends Controller
         return response(null,200);
     }
     
+    public function update(Request $request,$id) {
+        $user = User::find($id);
+         if(is_null($user)){
+             
+             return response()->json(['Result' => 'Chauffeur not found']);
+            }
+            else
+           $user->name=$request->name;
+           $user->tel=$request->tel;
+           $user->email=$request->email;
+           $user->adress=$request->adress;
+          $user->save();
+         $url="http://localhost:8000/storage/";
+          if($request->hasFile('image')){
+                    $file=$request->file('image');
+                       $extension=$file->getClientOriginalExtension();
+                    $path=$request->file('image')->storeAs('public',$user->id.'.'.$extension);
+                    $user->image=$path;
+                    $user->imagepath=$url.$path;
+                    $user->save();
+                    return response()->json([
+               'success'=>true,
+                        'message'=>"You have successfully created "
+                    ]);
+           }
+         return response()->json($user);
+ 
+     }
     public function show(Request $request){
 
         $result = User::where('usertype', 'LIKE', '%'. '0'. '%')->get();
@@ -73,5 +101,15 @@ class ChauffeurController extends Controller
          }
          else
          return response()->json(['Result' => 'No Data not found']);
+     }
+     
+     public function getChauffById(Request $request){
+        $result = User::find($request->id);
+        if(is_null($result)){
+            
+            return response()->json(['Result' => 'Chauffeur not found']);
+           }
+           else
+           return Response()->json($result);
      }
 }

@@ -46,7 +46,6 @@ class ForgotPasswordController extends Controller
 
         $token = $request->token;
         $passwordRest = DB::table('password_resets')->where('token', $token)->first();
-
         // Verify
         if(!$passwordRest){
             return response(['message' => 'Token Not Found.'], 200);
